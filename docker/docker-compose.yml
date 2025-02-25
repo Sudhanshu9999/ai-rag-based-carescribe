@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=ai_med_notes
+      - JWT_SECRET=${JWT_SECRET}
+      - SUMMARIZATION_API_URL=http://ai:8000/api/summarize
+    depends_on:
+      - postgres
+      - ai
+
+  ai:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ai
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ai_med_notes
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
