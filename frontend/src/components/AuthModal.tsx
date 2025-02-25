@@ -14,16 +14,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialMode, onClose }) => {
   const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:5001/api/auth/login", {
+      const response = await fetch(`${apiBaseUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -37,8 +40,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialMode, onClose }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
       onClose();
       router.push("/notes");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
     }
@@ -48,8 +52,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialMode, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    // Check that the password and confirm password fields match
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
+      const response = await fetch(`${apiBaseUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
@@ -61,8 +73,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialMode, onClose }) => {
       await response.json();
       // Switch to login mode after successful registration
       setMode("login");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -143,6 +156,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialMode, onClose }) => {
               className="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
               required
             />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+              required
+            />
             <button
               type="submit"
               className="w-full py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-500 transition"
@@ -152,7 +173,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialMode, onClose }) => {
           </form>
         )}
 
-        {/* Toggle between Login and Register using clickable text */}
         {mode === "login" ? (
           <p className="mt-4 text-center">
             Don't have an account?{" "}
