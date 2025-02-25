@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Notes table, with a foreign key referencing users
@@ -14,5 +14,5 @@ CREATE TABLE IF NOT EXISTS notes (
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   summary TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
