@@ -160,6 +160,3 @@ Created by Sudhanshu Jadhav
 ---
 
 *Note: This project is a proof-of-concept to showcase full-stack development and containerized deployment using React, Node.js, PostgreSQL, FastAPI, and Docker on AWS. Future improvements could include additional features, enhanced security, and more robust error handling.*
---------------------------------------------------
-
-Feel free to update the placeholders (like [Your Name], license details, and screenshot paths) as needed. Let me know if you need any further modifications!
