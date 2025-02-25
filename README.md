@@ -57,7 +57,7 @@
 3. **Create a ".env.local" File:**  
    In "frontend/.env.local", add:
    ```
-   NEXT_PUBLIC_API_BASE_URL=http://3.15.188.195:5001/api
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:5001/api
    ```
 4. **Start the Development Server:**
    ```
@@ -79,15 +79,13 @@
    In "backend/.env", add:
    ```
    PORT=5001
-   DB_USER=sudhanshujadhav
-   DB_PASSWORD=JaiDurga$1001
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
    DB_HOST=postgres
    DB_PORT=5432
    DB_NAME=ai_med_notes
    JWT_SECRET=your_jwt_secret_here
    SUMMARIZATION_API_URL=http://ai:8000/api/summarize
-   ETHEREAL_USER=ona35@ethereal.email
-   ETHEREAL_PASS=1fTjHHsFnDj851CMGn
    ```
 4. **Start the Backend Server (Locally or via Docker):**
    - For local development:
@@ -111,7 +109,11 @@
    ```
    pip install -r requirements.txt
    ```
-3. **Start the FastAPI Service:**
+3. **Create a ".env" File:**
+   ```
+   OPENAI_API_KEY=your_open_ai_key
+   ```
+4. **Start the FastAPI Service:**
    ```
    uvicorn main:app --host 0.0.0.0 --port 8000 --reload
    ```
