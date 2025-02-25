@@ -1,0 +1,30 @@
+# Use Node 18 Alpine for building the Next.js app
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+
+# Copy the entire frontend source code and build the app
+COPY frontend/ ./
+RUN npm run build
+
+# Production image
+FROM node:18-alpine
+WORKDIR /app
+
+# Install only production dependencies
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --production
+
+# Copy built output and public assets from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./
+
+# Expose the port Next.js uses
+EXPOSE 3000
+
+# Start the Next.js app
+CMD ["npm", "start"]

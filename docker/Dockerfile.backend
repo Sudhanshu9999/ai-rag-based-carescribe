@@ -1,0 +1,28 @@
+# Use Node 18 Alpine for building the backend
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY backend/package.json backend/package-lock.json tsconfig.json ./
+RUN npm ci
+
+# Copy the backend source code and build it
+COPY backend/ ./
+RUN npm run build
+
+# Production image for backend
+FROM node:18-alpine
+WORKDIR /app
+
+# Install production dependencies
+COPY backend/package.json backend/package-lock.json ./
+RUN npm ci --production
+
+# Copy built code from builder
+COPY --from=builder /app/dist ./dist
+
+# Expose backend port
+EXPOSE 5001
+
+# Start the Express server
+CMD ["node", "dist/server.js"]
