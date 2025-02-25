@@ -2,11 +2,11 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY backend/package.json backend/package-lock.json tsconfig.json ./
+# Copy package.json, package-lock.json, and tsconfig.json from the backend folder
+COPY backend/package.json backend/package-lock.json backend/tsconfig.json ./
 RUN npm ci
 
-# Copy the backend source code and build it
+# Copy the entire backend folder and build the project
 COPY backend/ ./
 RUN npm run build
 
@@ -18,10 +18,10 @@ WORKDIR /app
 COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --production
 
-# Copy built code from builder
+# Copy the built code from the builder stage
 COPY --from=builder /app/dist ./dist
 
-# Expose backend port
+# Expose the backend port
 EXPOSE 5001
 
 # Start the Express server
